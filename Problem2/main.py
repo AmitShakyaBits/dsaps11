@@ -21,11 +21,14 @@ class Items:
 def read_inputs():
     all_inputs = []
     f = None
-    f = open(input_file, "r")
-    for line in f.readlines():
-        temp = process_inputs(line)
-        if len(temp) > 0:
-            all_inputs.append(temp)
+    try:
+        f = open(input_file, "r")
+        for line in f.readlines():
+            temp = process_inputs(line)
+            if len(temp) > 0:
+                all_inputs.append(temp)
+    except Exception as e:
+        print_to_file('Could not read the inputs due to [{}]'.format(e))
     return all_inputs
 
 
@@ -33,23 +36,27 @@ def process_inputs(input_str):
     global MAX_WEAPONS
     global MAX_WEIGHT
     current_inputs = []
-    x = None
-    if 'Weapons' in input_str:
-        x = input_str.split(':')
-        MAX_WEAPONS = int(x[1].strip())
-    elif 'MaxWeight' in input_str:
-        x = input_str.split(':')
-        MAX_WEIGHT = int(x[1].strip())
-    elif '/' in input_str:
-        input_str = input_str.strip()
-        x = input_str.split('/')
-        if len(x) == 3:
-            current_inputs.append(x[0].strip())
-            current_inputs.append(x[1].strip())
-            current_inputs.append(x[2].strip())
+    try:
 
-        else:
-            print('Invalid input string.')
+        x = None
+        if 'Weapons' in input_str:
+            x = input_str.split(':')
+            MAX_WEAPONS = int(x[1].strip())
+        elif 'MaxWeight' in input_str:
+            x = input_str.split(':')
+            MAX_WEIGHT = int(x[1].strip())
+        elif '/' in input_str:
+            input_str = input_str.strip()
+            x = input_str.split('/')
+            if len(x) == 3:
+                current_inputs.append(x[0].strip())
+                current_inputs.append(x[1].strip())
+                current_inputs.append(x[2].strip())
+
+            else:
+                print('Invalid input string.')
+    except Exception as e:
+        print_to_file('Could not process inputs due to [{}]'.format(e))
     return current_inputs
 
 
@@ -73,39 +80,43 @@ def do_greedy_distribution(all_weapons, fill_small_power_first=False):
     used_weapon = 0
     global MAX_WEIGHT
     global MAX_WEAPONS
-    # sort the weapons based on power
-    if fill_small_power_first:
-        all_weapons.sort(key=lambda x: x.power, reverse=False)
-    else:
-        all_weapons.sort(key=lambda x: x.power, reverse=True)
-    for weapon in all_weapons:
-        current_capacity = used_capacity + weapon.weight
-        if current_capacity <= MAX_WEIGHT and used_weapon <= MAX_WEAPONS:
-            print(
-                'Fully using [{}] with power [{}], weight [{}] and damage [{}]'.format(weapon.name, weapon.power,
-                                                                                       weapon.weight, weapon.damage))
-            print_to_file('{} > 1'.format(weapon.name))
-            used_capacity = used_capacity + weapon.weight
-            used_weapon = used_weapon + 1
-            total_power = total_power + weapon.damage
+    try:
+        # sort the weapons based on power
+        if fill_small_power_first:
+            all_weapons.sort(key=lambda x: x.power, reverse=False)
         else:
+            all_weapons.sort(key=lambda x: x.power, reverse=True)
+        for weapon in all_weapons:
+            current_capacity = used_capacity + weapon.weight
+            if current_capacity <= MAX_WEIGHT and used_weapon <= MAX_WEAPONS:
+                print(
+                    'Fully using [{}] with power [{}], weight [{}] and damage [{}]'.format(weapon.name, weapon.power,
+                                                                                           weapon.weight,
+                                                                                           weapon.damage))
+                print_to_file('{} > 1'.format(weapon.name))
+                used_capacity = used_capacity + weapon.weight
+                used_weapon = used_weapon + 1
+                total_power = total_power + weapon.damage
+            else:
 
-            unused = MAX_WEIGHT - used_capacity
-            percent_used = (unused / weapon.weight)
-            value = weapon.power * unused
-            print(
-                'Partially [{}] using [{}] with power [{}], weight [{}] and damage [{}]'.format(percent_used,
-                                                                                                weapon.name,
-                                                                                                weapon.power,
-                                                                                                weapon.weight,
-                                                                                                weapon.damage))
-            print_to_file('{} > {}'.format(weapon.name, percent_used))
-            used_capacity = used_capacity + unused
-            total_power = total_power + value
+                unused = MAX_WEIGHT - used_capacity
+                percent_used = (unused / weapon.weight)
+                value = weapon.power * unused
+                print(
+                    'Partially [{}] using [{}] with power [{}], weight [{}] and damage [{}]'.format(percent_used,
+                                                                                                    weapon.name,
+                                                                                                    weapon.power,
+                                                                                                    weapon.weight,
+                                                                                                    weapon.damage))
+                print_to_file('{} > {}'.format(weapon.name, percent_used))
+                used_capacity = used_capacity + unused
+                total_power = total_power + value
 
-        if used_capacity == MAX_WEIGHT:
-            break
-    print_to_file("Total Damage: " + str(total_power))
+            if used_capacity == MAX_WEIGHT:
+                break
+        print_to_file("Total Damage: " + str(total_power))
+    except Exception as e:
+        print_to_file('Could not distribute due to [{}]'.format(e))
 
 
 def clear_output_file():
@@ -116,16 +127,22 @@ def clear_output_file():
         print('Could not delete the output file')
 
 
-def entry():
-    clear_output_file()
-    input_weapons = read_inputs()
-    all_weapons = []
-    # add weapons and calculate the power (damage/weight)
-    for weapon in input_weapons:
-        # print('Inserting [{}] with damage [{}]'.format(weapon[1], weapon[2]))
-        item = Items(weapon[0], int(weapon[1]), int(weapon[2]))
-        all_weapons.append(item)
-    do_greedy_distribution(all_weapons)
+def driver():
+    try:
+        clear_output_file()
+        input_weapons = read_inputs()
+        all_weapons = []
+        # add weapons and calculate the power (damage/weight)
+        for weapon in input_weapons:
+            # print('Inserting [{}] with damage [{}]'.format(weapon[1], weapon[2]))
+            item = Items(weapon[0], int(weapon[1]), int(weapon[2]))
+            all_weapons.append(item)
+        if len(all_weapons) > 0:
+            do_greedy_distribution(all_weapons)
+        else:
+            print_to_file('There is nothing to distribute.')
+    except Exception as e:
+        print_to_file('Unexpected error [{}]'.format(e))
 
 
-entry()
+driver()
