@@ -24,7 +24,9 @@ def build_tree(node, data: list):
     if node is None:
         return Node(data)
 
-    if input_id < node.data[1]:
+    input_id = int(input_id)
+    current_node_input = int(node.data[1])
+    if input_id < current_node_input:
         node.left = build_tree(node.left, data)
     else:
         node.right = build_tree(node.right, data)
@@ -79,7 +81,7 @@ def read_inputs(is_input=True, is_prompt=False):
     return all_inputs
 
 
-traversed = dict()
+traversed = {}
 counter = 0
 
 
@@ -152,7 +154,7 @@ def search(node, search_type, search_str):
     out = []
     if not len(traversed) > 0:
         inorder(node, record=True)
-    print('Search by [{}] for [{}]'.format(search_type, search_str))
+    # print('Search by [{}] for [{}]'.format(search_type, search_str))
     if len(traversed) > 0:
         for key in traversed.keys():
             current_inputs = traversed.get(key)
@@ -178,9 +180,10 @@ def entry():
     for data in inputs:
         node = build_tree(node, data)
     print_to_file('Listing the tree based on seniority')
-    print_to_file('#####################')
+    print_to_file('--------------------')
     inorder(node)
-    print_to_file('#####################')
+    print_to_file('--------------------')
+    print_to_file('\n')
 
     for prompt in prompts:
         # Format for prompt is list with 0 as type and 1 as value to search
@@ -214,7 +217,8 @@ def print_to_file(std_str):
 
 def process_results(search_type, search_value, results):
     print_to_file('Search by field {} for {}'.format(search_type, search_value))
-    print_to_file("###########################")
+    print_to_file("------------------------")
+
     for result in results:
         if search_type == 'ID':
             print_to_file('{} {}'.format(result[1], result[0]))
@@ -222,7 +226,8 @@ def process_results(search_type, search_value, results):
             print_to_file('{}'.format(result[0]))
         elif search_type == 'Designation':
             print_to_file('{}, {}'.format(result[0], result[1]))
-    print_to_file("###########################")
+    print_to_file("------------------------")
+    print_to_file('\n')
 
 
 # print(read_inputs(is_input=False, is_prompt=True))

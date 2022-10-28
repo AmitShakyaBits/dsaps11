@@ -1,5 +1,8 @@
 Listing the tree based on seniority
-#####################
+--------------------
+ABC , 1 , MD
+XYZ , 2 , GM
+MNO , 21 , CFO
 Rajesh Sharma , 1004 , CEO
 Mark Antony , 1006 , CTO
 Arun Kumar , 1009 , Trainee
@@ -9,37 +12,52 @@ Sony Rajesh , 1015 , Project Manager
 Anvar Mohamed , 1017 , Project Manager
 Rajesh Nair , 1103 , Software Engg
 Najeem Ali , 1105 , PRO
-#####################
+--------------------
+
+
 Search by field ID for 1004
-###########################
+------------------------
 1004 Rajesh Sharma
-###########################
+------------------------
+
+
 Search by field ID for 1005
-###########################
+------------------------
 not found not found
-###########################
+------------------------
+
+
 Search by field ID for 1006
-###########################
+------------------------
 1006 Mark Antony
-###########################
+------------------------
+
+
 Search by field ID for 1009
-###########################
+------------------------
 1009 Arun Kumar
-###########################
+------------------------
+
+
 Search by field ID for 1105
-###########################
+------------------------
 1105 Najeem Ali
-###########################
+------------------------
+
+
 Search by field Name for Rajesh
-###########################
+------------------------
 Rajesh Sharma
 Divya Rajesh
 Sony Rajesh
 Rajesh Nair
-###########################
-Search by field Designation for Project Manager
-###########################
-Jordan Leon, 1012
-Sony Rajesh, 1015
-Anvar Mohamed, 1017
-###########################
+------------------------
+
+
+Search by field Designation for software Engg
+------------------------
+Divya Rajesh, 1013
+Rajesh Nair, 1103
+------------------------
+
+
